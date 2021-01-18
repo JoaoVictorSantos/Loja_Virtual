@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:loja_virtual/screens/home_screen.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+import 'models/card_model.dart';
 import 'models/user_model.dart';
 
 void main() {
@@ -16,13 +17,18 @@ class MyApp extends StatelessWidget {
     //que no caso é UserModel.
     return ScopedModel(
       model: UserModel(),
-      child: MaterialApp(
-        title: "Flutter's Clothing",
-        theme: ThemeData(
-            primarySwatch: Colors.blue,
-            primaryColor: Color.fromARGB(255, 4, 125, 141)),
-        debugShowCheckedModeBanner: false,
-        home: HomeScreen(),
+      //Como o CardModel precisa de algumas informações do usuário, ele precisa
+      //está dentro do UserModel para ter acesso as informações
+      child: ScopedModel<CardModel>(
+        model: CardModel(),
+        child: MaterialApp(
+          title: "Flutter's Clothing",
+          theme: ThemeData(
+              primarySwatch: Colors.blue,
+              primaryColor: Color.fromARGB(255, 4, 125, 141)),
+          debugShowCheckedModeBanner: false,
+          home: HomeScreen(),
+        ),
       ),
     );
   }
