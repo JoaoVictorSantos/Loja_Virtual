@@ -125,7 +125,7 @@ class CartModel extends Model {
       "price": price,
       "shipPrice": shipPrice,
       "discount": discount,
-      "totalPrioe": ((price + shipPrice) - discount),
+      "totalPrice": ((price + shipPrice) - discount),
       "status": 1 //faz referencia ao status do pedido
       //Sendo 1 -> preparando; 2 -> enviando; 3 -> esperando entregar; 4 -> finalizado;
     });
