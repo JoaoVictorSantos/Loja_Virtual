@@ -5,6 +5,7 @@ class ShipCart extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+      //Forma de fazer o card expandir e fechar novamente;
       child: ExpansionTile(
         title: Text(
           "Frete",

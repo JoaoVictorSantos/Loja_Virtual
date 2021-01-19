@@ -11,7 +11,6 @@ class ProductsTab extends StatelessWidget {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
           } else {
-            print(snapshot.data.documents.length);
             //Quando tiver conexão com o firebase, deve-se utilizar esse metodo.
             //Forma de colocar uma linha entre os itens da lista
             var dividedTiles = ListTile.divideTiles(

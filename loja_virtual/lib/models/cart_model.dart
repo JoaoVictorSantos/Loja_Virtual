@@ -93,7 +93,7 @@ class CartModel extends Model {
     double price = 0;
     for (CartProduct c in products) {
       if (c.productData != null) {
-        price = c.quantity * c.productData.price;
+        price += c.quantity * c.productData.price;
       }
     }
     return price;
@@ -105,5 +105,61 @@ class CartModel extends Model {
 
   double getShipPrice() {
     return 9.99;
+  }
+
+  Future<String> finishOrder() async {
+    if (products.length == 0) return null;
+
+    isLoading = true;
+    notifyListeners();
+
+    double price = getPriceProducts();
+    double shipPrice = getShipPrice();
+    double discount = getDiscount();
+
+    //Salvando o pedido;
+    DocumentReference refOrder =
+        await Firestore.instance.collection("orders").add({
+      "clientId": userModel.firebaseUser.uid,
+      "products": products.map((p) => p.toMap()).toList(),
+      "price": price,
+      "shipPrice": shipPrice,
+      "discount": discount,
+      "totalPrioe": ((price + shipPrice) - discount),
+      "status": 1 //faz referencia ao status do pedido
+      //Sendo 1 -> preparando; 2 -> enviando; 3 -> esperando entregar; 4 -> finalizado;
+    });
+
+    //Salvando a referencia do pedido no usuário que realizou o pedido;
+    await Firestore.instance
+        .collection("users")
+        .document(userModel.firebaseUser.uid)
+        .collection("orders")
+        .document(refOrder.documentID)
+        .setData({"orderId": refOrder.documentID});
+
+    await _removeAllCart();
+
+    isLoading = false;
+    notifyListeners();
+
+    return refOrder.documentID;
+  }
+
+  Future<Null> _removeAllCart() async {
+    //Quando tem mais de um registro é QuerySnapshot, mas quando tem apenas um
+    //usa o DocumentSnapshot.
+    QuerySnapshot query = await Firestore.instance
+        .collection("users")
+        .document(userModel.firebaseUser.uid)
+        .collection("cart")
+        .getDocuments();
+
+    for (DocumentSnapshot doc in query.documents) {
+      doc.reference.delete();
+    }
+
+    products.clear();
+    setCoupon(null, 0);
   }
 }
