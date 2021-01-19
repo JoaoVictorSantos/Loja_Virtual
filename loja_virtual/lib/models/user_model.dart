@@ -15,6 +15,11 @@ class UserModel extends Model {
 
   bool isLoading = false;
 
+  //Forma de disponibilizar o UserModel para ser usado de qualquer lugar, sem
+  //chamar o ScodepModelDescendant para ter acesso a classe.
+  static UserModel of(BuildContext context) =>
+      ScopedModel.of<UserModel>(context);
+
   //Esse método será chamando, toda vez que a classe for inicializada.
   @override
   void addListener(listener) {
